@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixiv Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar for a cleaner look in dark mode */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; /* slate-800 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569; /* slate-600 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; /* slate-500 */
+        }
+        /* Style for the gallery items */
+        .gallery-item {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 0.5rem; /* rounded-lg */
+            background-color: #334155; /* slate-700 */
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .gallery-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 0.5rem;
+        }
+        .modal-video {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 font-sans">
+
+    <!-- Modal for full-screen image/video -->
+    <div id="modal" class="modal" onclick="closeModal()">
+        <img id="modal-img" class="modal-content" src="">
+        <video id="modal-video" class="modal-video" controls muted loop src=""></video>
+        <span class="absolute top-5 right-8 text-white text-5xl font-bold cursor-pointer" onclick="closeModal()">&times;</span>
+    </div>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-4xl font-bold text-white">Pixiv Downloader</h1>
+            <p class="text-lg text-slate-400">Control Panel & Gallery</p>
+        </header>
+
+        <!-- Control Panel -->
+        <section class="mb-10 bg-slate-800 p-6 rounded-lg shadow-xl">
+            <h2 class="text-2xl font-semibold mb-4 text-white">Start New Download</h2>
+            <form id="download-form" class="space-y-4">
+                <div>
+                    <label for="url-input" class="block text-sm font-medium text-slate-300 mb-1">Pixiv URL</label>
+                    <input type="text" id="url-input" placeholder="https://www.pixiv.net/en/artworks/..." class="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 text-white">
+                </div>
+                <div>
+                    <label for="depth-input" class="block text-sm font-medium text-slate-300 mb-1">Depth</label>
+                    <input type="number" id="depth-input" value="1" min="0" class="w-full md:w-48 px-4 py-2 bg-slate-700 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 text-white">
+                </div>
+                <button type="submit" id="start-button" class="px-6 py-2 bg-sky-600 text-white font-semibold rounded-md hover:bg-sky-700 transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 focus:ring-offset-slate-800">
+                    Start Download
+                </button>
+            </form>
+            <div id="status-message" class="mt-4 text-sm">&nbsp;</div>
+        </section>
+
+        <!-- Gallery -->
+        <section>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-white">Gallery</h2>
+                <button id="refresh-button" class="px-5 py-2 bg-slate-700 text-white font-medium rounded-md hover:bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:ring-offset-slate-900">
+                    Refresh
+                </button>
+            </div>
+            <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                <!-- Images and videos will be loaded here -->
+                <p id="loading-message" class="text-slate-400 col-span-full">Loading gallery...</p>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const downloadForm = document.getElementById('download-form');
+            const startButton = document.getElementById('start-button');
+            const statusMessage = document.getElementById('status-message');
+
+            const galleryGrid = document.getElementById('gallery-grid');
+            const loadingMessage = document.getElementById('loading-message');
+            const refreshButton = document.getElementById('refresh-button');
+
+            const modal = document.getElementById('modal');
+            const modalImg = document.getElementById('modal-img');
+            const modalVideo = document.getElementById('modal-video');
+
+            /**
+             * Fetches the list of images from the server and populates the gallery.
+             */
+            async function fetchImages() {
+                loadingMessage.textContent = 'Loading gallery...';
+                loadingMessage.style.display = 'block';
+                galleryGrid.innerHTML = ''; // Clear existing images
+
+                try {
+                    const response = await fetch('/api/images');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const filenames = await response.json();
+
+                    loadingMessage.style.display = 'none';
+
+                    if (filenames.length === 0) {
+                        galleryGrid.innerHTML = '<p class="text-slate-400 col-span-full">No images found. Start a download to see them here.</p>';
+                        return;
+                    }
+
+                    filenames.forEach(filename => {
+                        const fileSrc = `/downloads/${filename}`;
+                        const fileExt = filename.split('.').pop().toLowerCase();
+
+                        if (['mp4', 'webm'].includes(fileExt)) {
+                            // Create video element
+                            const video = document.createElement('video');
+                            video.src = fileSrc;
+                            video.className = 'gallery-item';
+                            video.muted = true;
+                            video.loop = true;
+                            video.preload = 'metadata';
+                            video.onmouseenter = () => video.play();
+                            video.onmouseleave = () => video.pause();
+                            video.onclick = () => openModal(fileSrc, 'video');
+                            galleryGrid.appendChild(video);
+                        } else {
+                            // Create image element
+                            const img = document.createElement('img');
+                            img.src = fileSrc;
+                            img.alt = filename;
+                            img.className = 'gallery-item';
+                            img.loading = 'lazy'; // Lazy load images
+                            img.onclick = () => openModal(fileSrc, 'image');
+                            galleryGrid.appendChild(img);
+                        }
+                    });
+
+                } catch (error) {
+                    console.error('Failed to fetch images:', error);
+                    loadingMessage.style.display = 'none';
+                    galleryGrid.innerHTML = `<p class="text-red-400 col-span-full">Error loading gallery: ${error.message}</p>`;
+                }
+            }
+
+            /**
+             * Handles the download form submission.
+             */
+            async function startDownload(event) {
+                event.preventDefault();
+                const url = document.getElementById('url-input').value;
+                const depth = document.getElementById('depth-input').value;
+
+                if (!url) {
+                    setStatus('Please enter a Pixiv URL.', 'error');
+                    return;
+                }
+
+                setStatus('Starting download... Please wait.', 'loading');
+                startButton.disabled = true;
+
+                try {
+                    const response = await fetch('/api/start-download', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            url: url,
+                            depth: parseInt(depth, 10)
+                        }),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        setStatus(result.message || 'Download started successfully!', 'success');
+                        document.getElementById('url-input').value = ''; // Clear input on success
+                    } else {
+                        throw new Error(result.message || 'An unknown error occurred.');
+                    }
+
+                } catch (error) {
+                    console.error('Failed to start download:', error);
+                    setStatus(`Error: ${error.message}`, 'error');
+                } finally {
+                    startButton.disabled = false;
+                }
+            }
+
+            /**
+             * Sets the status message text and color.
+             */
+            function setStatus(message, type = 'loading') {
+                statusMessage.textContent = message;
+                statusMessage.classList.remove('text-sky-400', 'text-green-400', 'text-red-400');
+                if (type === 'success') {
+                    statusMessage.classList.add('text-green-400');
+                } else if (type === 'error') {
+                    statusMessage.classList.add('text-red-400');
+                } else {
+                    statusMessage.classList.add('text-sky-400');
+                }
+            }
+
+            // --- Modal Functions ---
+            window.openModal = (src, type) => {
+                if (type === 'image') {
+                    modalImg.src = src;
+                    modalImg.style.display = 'block';
+                    modalVideo.style.display = 'none';
+                    modalVideo.pause();
+                } else {
+                    modalVideo.src = src;
+                    modalVideo.style.display = 'block';
+                    modalImg.style.display = 'none';
+                    modalVideo.play();
+                }
+                modal.style.display = 'flex';
+            }
+
+            window.closeModal = () => {
+                modal.style.display = 'none';
+                modalImg.src = '';
+                modalVideo.src = '';
+                modalVideo.pause();
+            }
+
+            downloadForm.addEventListener('submit', startDownload);
+            refreshButton.addEventListener('click', fetchImages);
+
+            fetchImages();
+        });
+    </script>
+</body>
+</html>

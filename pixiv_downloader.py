@@ -9,7 +9,7 @@ import concurrent.futures
 from pixivpy3 import AppPixivAPI
 from pixivpy3.utils import PixivError
 
-REFRESH_TOKEN = "mFB6S78nwnK9nQpCDff5bbQUNfWUppadrJqNx4k2ADQ"
+REFRESH_TOKEN = ""
 USER_AGENT = "PixivAndroidApp/5.0.234 (Android 11; Pixel 5)"
 DOWNLOAD_DIR = "pixiv_downloads"
 MAX_DOWNLOAD_WORKERS = 30
@@ -46,10 +46,9 @@ TAG_WHITELIST = [
 
 class PixivDownloader:
     """
-    An OOP-based downloader for Pixiv with tag filtering and
+    Downloader for Pixiv with tag filtering and
     concurrent downloads. All images are saved to a single directory.
     """
-
     def __init__(self, refresh_token, base_path, max_workers=10):
         self.api = AppPixivAPI()
         self.base_path = base_path

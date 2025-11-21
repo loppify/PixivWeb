@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Pixiv Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/photoswipe@5.4.3/dist/photoswipe.css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-slate-900 text-slate-200 font-sans">
+<div class="container mx-auto p-4 md:p-8 max-w-7xl">
+    <header class="mb-8">
+        <h1 class="text-4xl font-bold text-white">Pixiv Downloader</h1>
+        <p class="text-lg text-slate-400">Control Panel & Gallery</p>
+    </header>
+    <section class="mb-10 bg-slate-800 p-6 rounded-lg shadow-xl">
+        <h2 class="text-2xl font-semibold mb-4 text-white">Start New Download</h2>
+        <form id="download-form" class="space-y-3">
+            <div class="flex gap-2">
+                <input
+                        type="text"
+                        id="url-input"
+                        placeholder="Pixiv URL..."
+                        class="flex-1 h-10 px-3 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                >
+
+                <input
+                        type="number"
+                        id="depth-input"
+                        value="1"
+                        min="0"
+                        title="Search Depth / Pages"
+                        class="w-20 h-10 px-2 bg-slate-700 border border-slate-600 rounded-md text-white text-center focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                >
+            </div>
+
+            <button
+                    type="submit"
+                    id="start-button"
+                    class="w-full h-10 bg-sky-600 text-white font-semibold rounded-md hover:bg-sky-500 active:bg-sky-700 transition-colors shadow-sm"
+            >
+                Start Download
+            </button>
+        </form>
+        <div id="status-message" class="mt-4 text-sm">&nbsp;</div>
+    </section>
+
+    <!-- Filter Controls -->
+    <section class="mb-4 flex flex-wrap gap-4 justify-between items-center bg-slate-800 p-4 rounded-lg">
+        <div class="flex items-center gap-4">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+                <input type="checkbox" id="fav-filter"
+                       class="w-5 h-5 rounded bg-slate-700 border-slate-600 text-sky-600 focus:ring-sky-500">
+                <span class="text-white font-medium">Show Favorites Only</span>
+            </label>
+        </div>
+        <div class="flex gap-2">
+            <button id="delete-viewed-btn"
+                    class="px-4 py-2 bg-red-600 text-white text-sm font-bold rounded hover:bg-red-700 transition-colors">
+                Delete Viewed
+            </button>
+            <button id="refresh-button"
+                    class="px-4 py-2 bg-slate-700 text-white text-sm font-medium rounded hover:bg-slate-600">Refresh
+            </button>
+        </div>
+    </section>
+
+    <section>
+        <div id="gallery-grid"
+             class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"></div>
+        <div id="gallery-footer" class="text-center py-8">
+            <p id="loading-message" class="text-slate-400">Loading gallery...</p>
+        </div>
+    </section>
+</div>
+
+<script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

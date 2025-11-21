@@ -1,0 +1,90 @@
+::-webkit-scrollbar {
+    width: 0px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+.gallery-item-container {
+    position: relative;
+    width: 100%;
+    height: 250px;
+}
+
+.gallery-item {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: .5rem;
+    background-color: #334155;
+    cursor: pointer;
+    transition: transform .2s ease, opacity .3s ease;
+}
+
+.gallery-item:hover {
+    transform: scale(1.03);
+    z-index: 10;
+}
+
+.grid-heart {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: #ef4444;
+    display: none;
+    font-size: 1.2rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    z-index: 20;
+}
+
+.is-favorite .grid-heart {
+    display: block;
+}
+
+/* PhotoSwipe Custom Buttons */
+.pswp__button--copy-link, .pswp__button--favorite {
+    background: none;
+    font-size: 14px;
+    width: auto;
+    height: 44px;
+    line-height: 44px;
+    padding: 0 12px;
+    color: #fff;
+    opacity: .85;
+    transition: opacity .2s;
+}
+
+.pswp__button--copy-link:hover, .pswp__button--favorite:hover {
+    opacity: 1;
+}
+
+.pswp__button--favorite.active {
+    color: #ef4444;
+    font-weight: bold;
+}
+
+.pswp-video-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pswp-video-container video {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}

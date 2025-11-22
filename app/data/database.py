@@ -1,5 +1,5 @@
 import sqlite3
-import os
+
 from flask import g
 
 DB_NAME = "pixiv_media.db"

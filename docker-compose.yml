@@ -8,8 +8,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./app/data/pixiv_media.db:/app/data/pixiv_media.db
-      - ./app/pixiv_downloads:/app/data/pixiv_downloads
+      - ./pixiv_media.db:/app/pixiv_media.db
+      - ./pixiv_downloads:/app/pixiv_downloads
 
     restart: always
 

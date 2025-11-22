@@ -213,6 +213,6 @@ __marimo__/
 .idea/misc.xml
 
 config.py
-app/data/pixiv_downloads/
+pixiv_downloads/
 
 *.db

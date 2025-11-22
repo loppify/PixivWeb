@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  pixiv_web:
+    build: .
+    container_name: pixiv_web_app
+
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app/data/pixiv_media.db:/app/data/pixiv_media.db
+      - ./app/pixiv_downloads:/app/data/pixiv_downloads
+
+    restart: always
+
+    command: python run.py

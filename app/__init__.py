@@ -7,8 +7,7 @@ def create_app():
     app = Flask(__name__)
 
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
-    app.config['DOWNLOAD_FOLDER'] = os.environ.get('DOWNLOAD_FOLDER', 'downloads')
-
+    app.config['DOWNLOAD_FOLDER'] = os.environ.get('DOWNLOAD_FOLDER', 'pixiv_downloads')
     os.makedirs(app.config['DOWNLOAD_FOLDER'], exist_ok=True)
 
     with app.app_context():

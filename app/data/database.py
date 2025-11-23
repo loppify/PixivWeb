@@ -1,3 +1,4 @@
+import os
 import sqlite3
 
 from flask import g
@@ -19,6 +20,9 @@ def close_db(e=None):
 
 
 def init_db():
+    if not os.path.exists(DB_NAME):
+        open(DB_NAME, 'a').close()
+
     db = get_db()
 
     db.execute('''

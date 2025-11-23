@@ -6,10 +6,10 @@ services:
     container_name: pixiv_web_app
 
     ports:
-      - "8000:8000"
+      - "5000:5000"
     volumes:
       - ./pixiv_media.db:/app/pixiv_media.db
-      - ./pixiv_downloads:/app/pixiv_downloads
+      - ./downloads:/app/downloads
 
     restart: always
 

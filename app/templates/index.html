@@ -17,12 +17,14 @@
     <section class="mb-10 bg-slate-800 p-6 rounded-lg shadow-xl">
         <h2 class="text-2xl font-semibold mb-4 text-white">Start New Download</h2>
         <form id="download-form" class="space-y-3">
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2">
                 <input
                         type="text"
                         id="url-input"
                         placeholder="Pixiv URL..."
-                        class="flex-1 h-10 px-3 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                        class="flex-auto h-10 px-3 bg-slate-700 border border-slate-600 rounded-md text-white
+                        placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500
+                        transition-all"
                 >
 
                 <input
@@ -31,14 +33,16 @@
                         value="1"
                         min="0"
                         title="Search Depth / Pages"
-                        class="w-20 h-10 px-2 bg-slate-700 border border-slate-600 rounded-md text-white text-center focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
+                        class="w-20 h-10 px-2 bg-slate-700 border border-slate-600 rounded-md text-white text-center
+                        focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition-all"
                 >
             </div>
 
             <button
                     type="submit"
                     id="start-button"
-                    class="w-full h-10 bg-sky-600 text-white font-semibold rounded-md hover:bg-sky-500 active:bg-sky-700 transition-colors shadow-sm"
+                    class="w-full h-10 bg-sky-600 text-white font-semibold rounded-md hover:bg-sky-500
+                    active:bg-sky-700 transition-colors shadow-sm"
             >
                 Start Download
             </button>
@@ -46,7 +50,6 @@
         <div id="status-message" class="mt-4 text-sm">&nbsp;</div>
     </section>
 
-    <!-- Filter Controls -->
     <section class="mb-4 flex flex-wrap gap-4 justify-between items-center bg-slate-800 p-4 rounded-lg">
         <div class="flex items-center gap-4">
             <label class="flex items-center gap-2 cursor-pointer select-none">

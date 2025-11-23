@@ -96,7 +96,7 @@ To stop the application:
 docker-compose down
 ```
 🖥️ Usage
-1. Access the UI: Navigate to http://localhost:8000.
+1. Access the UI: Navigate to http://localhost:5000.
 
 2. Start Downloading:
 
